@@ -133,7 +133,10 @@ namespace Library.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM books WHERE id = @thisId;";// DELETE from books_authors WHERE book_id = @thisId;";
+      cmd.CommandText = @"
+        DELETE FROM books WHERE id = @thisId;
+        DELETE FROM books_authors WHERE book_id = @thisId;
+        DELETE FROM copies WHERE book_id = @thisId";
 
       MySqlParameter thisId = new MySqlParameter();
       thisId.ParameterName = "@thisId";
@@ -149,7 +152,7 @@ namespace Library.Models
       }
     }
 
-    public void AddAuthor(Person author)
+    public void AddAuthor(Author author)
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
@@ -165,18 +168,18 @@ namespace Library.Models
         conn.Dispose();
     }
 
-    public List<Person> GetAuthors()
+    public List<Author> GetAuthors()
     {
-      List<Person> authors = new List<Person>();
+      List<Author> authors = new List<Author>();
 
       MySqlConnection conn = DB.Connection();
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
       cmd.CommandText = @"
-        SELECT persons.* FROM books
+        SELECT authors.* FROM books
         JOIN books_authors ON (books.id = books_authors.book_id)
-        JOIN persons ON (books_authors.author_id = persons.id)
+        JOIN authors ON (books_authors.author_id = authors.id)
         WHERE books.id = @ThisId
       ";
       cmd.Parameters.Add(new MySqlParameter("@ThisId", _id));
@@ -186,7 +189,7 @@ namespace Library.Models
         int authorId = rdr.GetInt32(0);
         string firstName = rdr.GetString(1);
         string lastName = rdr.GetString(2);
-        Person newAuthor = new Person(firstName, lastName, authorId);
+        Author newAuthor = new Author(firstName, lastName, authorId);
         authors.Add(newAuthor);
       }
 
@@ -229,5 +232,37 @@ namespace Library.Models
         conn.Dispose();
       return count;
     }
+
+    public static List<Book> Search(string search)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"
+        SELECT books.* FROM books
+        LEFT JOIN books_authors ON (books.id = books_authors.book_id)
+        LEFT JOIN authors ON (books_authors.author_id = authors.id)
+        WHERE books.name LIKE @Search OR authors.firstName LIKE @Search OR authors.lastName LIKE @Search
+        ORDER BY books.name;
+      ";
+      cmd.Parameters.Add(new MySqlParameter("@Search", '%' + search + '%'));
+      MySqlDataReader rdr = cmd.ExecuteReader();
+
+      List<Book> books = new List<Book>();
+      while(rdr.Read())
+      {
+        int bookId = rdr.GetInt32(0);
+        string bookName = rdr.GetString(1);
+        books.Add(new Book(bookName, bookId));
+      }
+
+      conn.Close();
+      if (conn !=null)
+        conn.Dispose();
+
+      return books;
+    }
+
   }
 }

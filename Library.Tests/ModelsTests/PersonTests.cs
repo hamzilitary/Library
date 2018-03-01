@@ -15,8 +15,8 @@ namespace Library.Models.Tests
 
     public void Dispose()
     {
-      Book.DeleteAll();
-      Person.DeleteAll();
+      // Book.DeleteAll();
+      // Person.DeleteAll();
     }
 
     [TestMethod]

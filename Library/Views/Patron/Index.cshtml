@@ -1,0 +1,33 @@
+@{
+  Layout = "_Layout";
+}
+
+<h2>Patron index</h2>
+<form action= "/patron/search" method="post">
+  <input type="text" name="search" placeholder="Search">
+  <button type="submit" name="button">SEARCH</button>
+</form>
+<table class='table table-bordered'>
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Author</th>
+      <th>Copies Available</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var book in Model)
+    {
+      <tr>
+        <td>@book.GetName()</td>
+        <td>
+          @foreach(var author in book.GetAuthors())
+          {
+            <p>@author.GetLastName(), @author.GetFirstName()</p>
+          }
+        </td>
+        <td>@book.GetCopyCount()</td>
+      </tr>
+    }
+  </tbody>
+</table>

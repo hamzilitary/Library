@@ -4,13 +4,13 @@ using MySql.Data.MySqlClient;
 
 namespace Library.Models
 {
-  public class Person
+  public class Author
   {
     private int _id;
     private string _firstName;
     private string _lastName;
 
-    public Person(string firstName, string lastName, int id = 0)
+    public Author(string firstName, string lastName, int id = 0)
     {
       _id = id;
       _firstName = firstName;
@@ -29,16 +29,16 @@ namespace Library.Models
       return _id;
     }
 
-    public override bool Equals(System.Object otherPerson)
+    public override bool Equals(System.Object otherAuthor)
     {
-      if (!(otherPerson is Person))
+      if (!(otherAuthor is Author))
       {
         return false;
       }
       else
       {
-        Person newPerson = (Person) otherPerson;
-        return _id == newPerson._id && _firstName == newPerson._firstName && _lastName == newPerson._lastName;
+        Author newAuthor = (Author) otherAuthor;
+        return _id == newAuthor._id && _firstName == newAuthor._firstName && _lastName == newAuthor._lastName;
       }
     }
 
@@ -53,7 +53,7 @@ namespace Library.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"INSERT INTO persons (firstName, lastName) VALUES (@firstName, @lastName)";
+      cmd.CommandText = @"INSERT INTO authors (firstName, lastName) VALUES (@firstName, @lastName)";
       cmd.Parameters.Add(new MySqlParameter("@firstName", _firstName));
       cmd.Parameters.Add(new MySqlParameter("@lastName", _lastName));
 
@@ -66,29 +66,29 @@ namespace Library.Models
         conn.Dispose();
     }
 
-    public static List<Person> GetAll()
+    public static List<Author> GetAll()
     {
-      List<Person> allPersons = new List<Person>();
+      List<Author> allAuthors = new List<Author>();
 
       MySqlConnection conn = DB.Connection();
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"SELECT * FROM persons";
+      cmd.CommandText = @"SELECT * FROM authors";
       MySqlDataReader rdr = cmd.ExecuteReader();
       while(rdr.Read())
       {
-        int personId = rdr.GetInt32(0);
-        string personFirstName = rdr.GetString(1);
-        string personLastName = rdr.GetString(2);
-        Person newPerson = new Person(personFirstName, personLastName, personId);
-        allPersons.Add(newPerson);
+        int authorId = rdr.GetInt32(0);
+        string authorFirstName = rdr.GetString(1);
+        string authorLastName = rdr.GetString(2);
+        Author newAuthor = new Author(authorFirstName, authorLastName, authorId);
+        allAuthors.Add(newAuthor);
       }
 
       conn.Close();
       if (conn != null)
         conn.Dispose();
-      return allPersons;
+      return allAuthors;
     }
 
     public static void DeleteAll()
@@ -97,7 +97,7 @@ namespace Library.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"TRUNCATE TABLE persons; TRUNCATE TABLE books_authors;";
+      cmd.CommandText = @"TRUNCATE TABLE authors; TRUNCATE TABLE books_authors;";
       cmd.ExecuteNonQuery();
 
       conn.Close();
@@ -105,33 +105,33 @@ namespace Library.Models
         conn.Dispose();
     }
 
-    public static Person Find(int id)
+    public static Author Find(int id)
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"SELECT * FROM `persons` WHERE id = @thisId;";
+      cmd.CommandText = @"SELECT * FROM `authors` WHERE id = @thisId;";
       cmd.Parameters.Add(new MySqlParameter("@thisId", id));
       MySqlDataReader rdr = cmd.ExecuteReader();
 
-      int personId = 0;
-      string personFirstName = "";
-      string personLastName = "";
+      int authorId = 0;
+      string authorFirstName = "";
+      string authorLastName = "";
 
       if(rdr.Read())
       {
-        personId = rdr.GetInt32(0);
-        personFirstName = rdr.GetString(1);
-        personLastName = rdr.GetString(2);
+        authorId = rdr.GetInt32(0);
+        authorFirstName = rdr.GetString(1);
+        authorLastName = rdr.GetString(2);
       }
-      Person foundPerson = new Person(personFirstName, personLastName, personId);
+      Author foundAuthor = new Author(authorFirstName, authorLastName, authorId);
 
       conn.Close();
       if (conn !=null)
         conn.Dispose();
 
-      return foundPerson;
+      return foundAuthor;
     }
 
     public void Delete()
@@ -139,7 +139,7 @@ namespace Library.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM persons WHERE id = @thisId;";// DELETE from books_authors WHERE person_id = @thisId;";
+      cmd.CommandText = @"DELETE FROM authors WHERE id = @thisId;";// DELETE from books_authors WHERE author_id = @thisId;";
 
       MySqlParameter thisId = new MySqlParameter();
       thisId.ParameterName = "@thisId";
@@ -180,10 +180,10 @@ namespace Library.Models
 
       MySqlCommand cmd = conn.CreateCommand();
       cmd.CommandText = @"
-        SELECT books.* FROM persons
-        JOIN books_authors ON (persons.id = books_authors.author_id)
+        SELECT books.* FROM authors
+        JOIN books_authors ON (authors.id = books_authors.author_id)
         JOIN books ON (books_authors.book_id = books.id)
-        WHERE persons.id = @ThisId;";
+        WHERE authors.id = @ThisId;";
       cmd.Parameters.Add(new MySqlParameter("@ThisId", _id));
       MySqlDataReader rdr = cmd.ExecuteReader();
       while(rdr.Read())
