@@ -6,14 +6,9 @@ namespace Library.Models
 {
   public class Checkout
   {
-    private int _id;
-    private string _bookName;
-
-    // public static void CheckoutBook(Book book,  patron)
-    // {
-    //
-    // }
-
-    // public static void ReturnBook(Book book, )
+    public int Id;
+    public string BookName;
+    public DateTime CheckoutDate;
+    public DateTime DueDate;
   }
 }

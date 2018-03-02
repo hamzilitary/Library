@@ -2,11 +2,42 @@
   Layout = "_Layout";
 }
 
-<h3>What Am I?</h3>
-<form action="/" method="post">
-  <select class="" name="loginChoice">
-    <option value="patron">Patron</option>
-    <option value="librarian">Librarian</option>
-  </select>
-  <button class='btn btn-success' type="submit" name="button">GO!</button>
+<h2>All Books</h2>
+
+<a href="/books/new">Add A New Book</a> |
+<a href="/authors/new">Add A New Author</a> |
+<a href="/patrons">See All Patrons</a>
+<form action= "/search" method="post">
+  <input type="text" name="search" placeholder="Search">
+  <button type="submit" name="button">SEARCH</button>
 </form>
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Author</th>
+      <th>Copies</th>
+      <th>Delete Book</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var book in Model)
+    {
+      <tr>
+        <td>@book.GetName()</td>
+        <td>
+          @foreach(var author in book.GetAuthors())
+          {
+            <p>@author.GetLastName(), @author.GetFirstName()</p>
+          }
+        </td>
+        <td>
+          <a class="black" href='/remove/@book.GetId()'><span class="glyphicon glyphicon-minus"></span></a>
+          @book.GetCopyCount()
+          <a class="black" href='/add/@book.GetId()'><span class="glyphicon glyphicon-plus"></span></a>
+        </td>
+        <td class="danger"><a class="red" href='/delete/@book.GetId()'><span class="glyphicon glyphicon-remove"></span></a></td>
+      </tr>
+    }
+  </tbody>
+</table>

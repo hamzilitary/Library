@@ -90,9 +90,9 @@ namespace Library.Models
 
       MySqlCommand cmd = conn.CreateCommand();
       cmd.CommandText = @"
-        TRUNCATE TABLE books;
-        TRUNCATE TABLE books_authors;
-        TRUNCATE TABLE copies;
+        DELETE FROM books;
+        DELETE FROM books_authors;
+        DELETE FROM copies;
       ";
       cmd.ExecuteNonQuery();
 
@@ -135,8 +135,7 @@ namespace Library.Models
       var cmd = conn.CreateCommand() as MySqlCommand;
       cmd.CommandText = @"
         DELETE FROM books WHERE id = @thisId;
-        DELETE FROM books_authors WHERE book_id = @thisId;
-        DELETE FROM copies WHERE book_id = @thisId";
+        DELETE FROM books_authors WHERE book_id = @thisId;";
 
       MySqlParameter thisId = new MySqlParameter();
       thisId.ParameterName = "@thisId";
@@ -189,7 +188,7 @@ namespace Library.Models
         int authorId = rdr.GetInt32(0);
         string firstName = rdr.GetString(1);
         string lastName = rdr.GetString(2);
-        Author newAuthor = new Author(firstName, lastName, authorId);
+        Author newAuthor = new Author(lastName, firstName, authorId);
         authors.Add(newAuthor);
       }
 
@@ -205,7 +204,22 @@ namespace Library.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"INSERT INTO copies (book_id) VALUES (@BookId)";
+      cmd.CommandText = @"INSERT INTO copies (book_id, checked_out) VALUES (@BookId, @CheckedOut)";
+      cmd.Parameters.Add(new MySqlParameter("@BookId", _id));
+      cmd.Parameters.Add(new MySqlParameter("@CheckedOut", false));
+      cmd.ExecuteNonQuery();
+
+      conn.Close();
+      if (conn != null)
+        conn.Dispose();
+    }
+
+    public void RemoveCopy()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"DELETE FROM copies WHERE book_id = @BookId AND checked_out = false LIMIT 1;";
       cmd.Parameters.Add(new MySqlParameter("@BookId", _id));
       cmd.ExecuteNonQuery();
 
@@ -221,6 +235,25 @@ namespace Library.Models
 
       MySqlCommand cmd = conn.CreateCommand();
       cmd.CommandText = @"SELECT * FROM copies WHERE book_id = @thisId";
+      cmd.Parameters.AddWithValue("@thisId", _id);
+      MySqlDataReader rdr = cmd.ExecuteReader();
+      int count = 0;
+      while(rdr.Read())
+        count++;
+
+      conn.Close();
+      if (conn != null)
+        conn.Dispose();
+      return count;
+    }
+
+    public int GetCopiesAvailable()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      MySqlCommand cmd = conn.CreateCommand();
+      cmd.CommandText = @"SELECT * FROM copies WHERE book_id = @thisId AND checked_out = false";
       cmd.Parameters.AddWithValue("@thisId", _id);
       MySqlDataReader rdr = cmd.ExecuteReader();
       int count = 0;

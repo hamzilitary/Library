@@ -15,8 +15,8 @@ namespace Library.Models.Tests
 
     public void Dispose()
     {
-      // Book.DeleteAll();
-      // Person.DeleteAll();
+      Book.DeleteAll();
+      Author.DeleteAll();
     }
 
     [TestMethod]
@@ -52,21 +52,21 @@ namespace Library.Models.Tests
     }
 
     [TestMethod]
-    public void GetAuthors_ReturnListOfAllAuthors_ListPerson()
+    public void GetAuthors_ReturnListOfAllAuthors_ListAuthor()
     {
       Book testBook = new Book("How To Program");
       testBook.Save();
-      Person author1 = new Person("Bob", "Ross");
+      Author author1 = new Author("Bob", "Ross");
       author1.Save();
-      Person author2 = new Person("Rob", "Boss");
+      Author author2 = new Author("Rob", "Boss");
       author2.Save();
-      Person author3 = new Person("Sob", "Boss");
+      Author author3 = new Author("Sob", "Boss");
       author3.Save();
 
       testBook.AddAuthor(author1);
       testBook.AddAuthor(author2);
 
-      CollectionAssert.AreEqual(new List<Person>{author1, author2}, testBook.GetAuthors());
+      CollectionAssert.AreEqual(new List<Author>{author1, author2}, testBook.GetAuthors());
     }
 
     [TestMethod]
@@ -85,6 +85,27 @@ namespace Library.Models.Tests
 
       Assert.AreEqual(3, testBook1.GetCopyCount());
       Assert.AreEqual(2, testBook2.GetCopyCount());
+    }
+
+    [TestMethod]
+    public void RemoveCopy_DeleteCopyOfBook_Void()
+    {
+      Book testBook1 = new Book("How To Program");
+      testBook1.Save();
+      Book testBook2 = new Book("Coding For Dummies");
+      testBook2.Save();
+
+      testBook1.AddCopy();
+      testBook1.AddCopy();
+      testBook2.AddCopy();
+      testBook2.AddCopy();
+      testBook1.AddCopy();
+
+      Assert.AreEqual(3, testBook1.GetCopyCount());
+      Assert.AreEqual(2, testBook2.GetCopyCount());
+
+      testBook2.RemoveCopy();
+      Assert.AreEqual(1, testBook2.GetCopyCount());
     }
   }
 }

@@ -1,0 +1,51 @@
+@{
+  Layout = "_Layout";
+}
+
+<h3>Name: @Model.GetFirstName() @Model.GetLastName()</h3>
+
+<a href='/patrons/@Model.GetId()/checkout'>Checkout A Book</a>
+
+<h4>Currently Checked Out</h4>
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Checkout Date</th>
+      <th>Return Dates</th>
+      <th>Return Book</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var activeCheckout in Model.GetActiveCheckouts())
+    {
+      <tr>
+        <td>@activeCheckout.BookName</td>
+        <td>@activeCheckout.CheckoutDate.ToString("MM/dd/yyyy")</td>
+        <td>@activeCheckout.DueDate.ToString("MM/dd/yyyy")</td>
+        <td><a href='/patrons/@Model.GetId()/return/@activeCheckout.Id'>RETURN</a></td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+
+
+<h4>Checkout History</h4>
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Checkout Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var checkout in Model.GetCheckoutHistory())
+    {
+      <tr>
+        <td>@checkout.BookName</td>
+        <td>@checkout.CheckoutDate.ToString("MM/dd/yyyy")</td>
+      </tr>
+    }
+  </tbody>
+</table>

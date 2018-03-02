@@ -1,0 +1,30 @@
+@{
+  Layout = "_Layout";
+}
+<a href='/patrons/@Model["patronId"]'>Go Back</a>
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Author</th>
+      <th>Copies</th>
+      <th>Checkout</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var book in Model["books"])
+    {
+      <tr>
+        <td>@book.GetName()</td>
+        <td>
+          @foreach(var author in book.GetAuthors())
+          {
+            <p>@author.GetLastName(), @author.GetFirstName()</p>
+          }
+        </td>
+        <td>@book.GetCopiesAvailable() / @book.GetCopyCount()</td>
+        <td><a class="black" href='/patrons/@Model["patronId"]/checkout/@book.GetId()'><span class="glyphicon glyphicon-plus"></span></a></td>
+      </tr>
+    }
+  </tbody>
+</table>

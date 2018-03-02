@@ -2,14 +2,18 @@
   Layout = "_Layout";
 }
 
-<form action="/librarian" method="post">
+<form action="/" method="post">
   <input type="text" name="name" placeholder="Title">
-  <select class="" name="author">
-    <option value='0'>Unknown</option>
+  <input type="number" id="number-of-authors" name="number-of-authors" placeholder="Number Of Authors">
+
+  <div id="authors"></div>
+
+  <select class="author" name="author">
     @foreach(var author in Library.Models.Author.GetAll())
     {
       <option value='@author.GetId()'>@author.GetLastName(), @author.GetFirstName()</option>
     }
   </select>
+
   <button type="submit" name="button">Add Book</button>
 </form>

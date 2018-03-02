@@ -1,0 +1,26 @@
+@{
+  Layout = "_Layout";
+}
+<a href="/patrons/new">Add A Patron</a>
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Last Name</th>
+      <th>First Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var patron in Model)
+    {
+      <tr>
+        <td><a class="black" href='/patrons/@patron.GetId()'><span class="glyphicon glyphicon-th-list"></span></a></td>
+        <td>@patron.GetLastName()</td>
+        <td>@patron.GetFirstName()</td>
+
+
+        <td class="danger"><a class="red" href='/patrons/@patron.GetId()/delete'><span class="glyphicon glyphicon-remove"></span></a></td>
+      </tr>
+    }
+  </tbody>
+</table>

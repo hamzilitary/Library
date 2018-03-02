@@ -6,49 +6,49 @@ using System.Collections.Generic;
 namespace Library.Models.Tests
 {
   [TestClass]
-  public class PersonTests : IDisposable
+  public class AuthorTests : IDisposable
  {
-    public PersonTests()
+    public AuthorTests()
     {
       DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=library_test;";
     }
 
     public void Dispose()
     {
-      // Book.DeleteAll();
-      // Person.DeleteAll();
+      Book.DeleteAll();
+      Author.DeleteAll();
     }
 
     [TestMethod]
-    public void GetAll_ReturnListOfAllPersons_ListPerson()
+    public void GetAll_ReturnListOfAllAuthors_ListAuthor()
     {
-      Person testPerson = new Person("John", "Smith");
-      testPerson.Save();
+      Author testAuthor = new Author("John", "Smith");
+      testAuthor.Save();
 
-      CollectionAssert.AreEqual(new List<Person>{testPerson}, Person.GetAll());
+      CollectionAssert.AreEqual(new List<Author>{testAuthor}, Author.GetAll());
     }
 
     [TestMethod]
-    public void Find_ReturnPersonWithId_Person()
+    public void Find_ReturnAuthorWithId_Author()
     {
-      Person testPerson = new Person("John", "Smith");
-      testPerson.Save();
-      int id = testPerson.GetId();
+      Author testAuthor = new Author("John", "Smith");
+      testAuthor.Save();
+      int id = testAuthor.GetId();
 
-      Assert.AreEqual(testPerson, Person.Find(id));
+      Assert.AreEqual(testAuthor, Author.Find(id));
     }
 
     [TestMethod]
-    public void Delete_DeletePersonFromDatabase_void()
+    public void Delete_DeleteAuthorFromDatabase_void()
     {
-      Person testPerson1 = new Person("John", "Smith");
-      testPerson1.Save();
-      Person testPerson2 = new Person("Jane", "Doe");
-      testPerson2.Save();
+      Author testAuthor1 = new Author("John", "Smith");
+      testAuthor1.Save();
+      Author testAuthor2 = new Author("Jane", "Doe");
+      testAuthor2.Save();
 
-      testPerson1.Delete();
+      testAuthor1.Delete();
 
-      CollectionAssert.AreEqual(new List<Person>{testPerson2}, Person.GetAll());
+      CollectionAssert.AreEqual(new List<Author>{testAuthor2}, Author.GetAll());
     }
 
     [TestMethod]
@@ -61,7 +61,7 @@ namespace Library.Models.Tests
       Book testBook3 = new Book("Learning C#");
       testBook3.Save();
 
-      Person author = new Person("Bob", "Ross");
+      Author author = new Author("Bob", "Ross");
       author.Save();
 
       author.AddBook(testBook1);

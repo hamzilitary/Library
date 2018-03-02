@@ -10,7 +10,7 @@ namespace Library.Models
     private string _firstName;
     private string _lastName;
 
-    public Author(string firstName, string lastName, int id = 0)
+    public Author(string lastName, string firstName, int id = 0)
     {
       _id = id;
       _firstName = firstName;
@@ -81,7 +81,7 @@ namespace Library.Models
         int authorId = rdr.GetInt32(0);
         string authorFirstName = rdr.GetString(1);
         string authorLastName = rdr.GetString(2);
-        Author newAuthor = new Author(authorFirstName, authorLastName, authorId);
+        Author newAuthor = new Author(authorLastName, authorFirstName, authorId);
         allAuthors.Add(newAuthor);
       }
 
@@ -97,7 +97,7 @@ namespace Library.Models
       conn.Open();
 
       MySqlCommand cmd = conn.CreateCommand();
-      cmd.CommandText = @"TRUNCATE TABLE authors; TRUNCATE TABLE books_authors;";
+      cmd.CommandText = @"DELETE FROM authors; DELETE FROM books_authors;";
       cmd.ExecuteNonQuery();
 
       conn.Close();
@@ -125,7 +125,7 @@ namespace Library.Models
         authorFirstName = rdr.GetString(1);
         authorLastName = rdr.GetString(2);
       }
-      Author foundAuthor = new Author(authorFirstName, authorLastName, authorId);
+      Author foundAuthor = new Author(authorLastName, authorFirstName, authorId);
 
       conn.Close();
       if (conn !=null)
